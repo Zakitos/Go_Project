@@ -29,6 +29,6 @@ func handler (w http.ResponseWriter, r *http.Request){
 }
 
 func main (){
-  http.HandleFunc("/view/",handler) // On traite toutes les a partir du /view
+  http.HandleFunc("/carl/",handler) // On traite toutes les a partir du /view
   http.ListenAndServe(":8080", nil) // On lance le serveur, on écoute en boucle
 }
