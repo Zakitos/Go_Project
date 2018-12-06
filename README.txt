@@ -5,7 +5,7 @@ Initialisation de GOROOT :
 export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin
 
-Initialisation de GOPATH :
+Initialisation de GOPATH :zez
 export GOPATH=/home/zakaria/Bureau/Go_Project/Projet
 
 Initialisation de GOBIN :
