@@ -21,3 +21,4 @@ Apprentissage basique du GO.
 Mise en place de l'arborescence du projet.
 Création d'un Github pour le projet.
 Nous avons commencé à découvrir le package NET.
+Nous commencons le Rush 1
