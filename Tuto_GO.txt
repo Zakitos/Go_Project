@@ -1,0 +1,32 @@
+ASTUCE SUR GO :
+":=" --> Permet de determiner automatiquement le type d'une variable
+"os" --> Package permettant de gérer les arguments en mode itératif
+--> Os.Exit(1) --> Leave Process en cas d'erreur
+
+<variable-name> := <value>
+var <variable-name> <data_type> := <value>
+
+Package time :
+  heure_actuelle := time.Now().Hour()
+
+Package error :
+  Gestion des erreurs --> err := erreurs.New("Message")
+  Les erreurs sont des types
+  return message, nil --> pas d'erreurs$
+  if (err != nil) --> Il y a des erreurs
+
+Les fonctions en GO :
+  func <nom_fonction>(<variable1> <type1>) <type de retour>{
+  }
+
+Par défault les variables sont initialisées a 0
+
+Boucles :
+Les FOR se font comme en C , il faut rajouter ":="
+Tableaux :
+var tab []"type" --> Allocation Dynamique
+var tab [taille]"type" --> Allocation Statique
+tab := []string{"go","ruby"}
+for i:= range tab // version plus courte
+
+fmt.Println =(<variable>,"chaine")
