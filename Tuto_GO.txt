@@ -1,4 +1,4 @@
-ASTUCE SUR GO :
+Base de GO :
 ":=" --> Permet de determiner automatiquement le type d'une variable
 "os" --> Package permettant de gérer les arguments en mode itératif
 --> Os.Exit(1) --> Leave Process en cas d'erreur
