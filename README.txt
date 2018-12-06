@@ -17,7 +17,7 @@ Nous avons commencé à découvrir le package NET.
 
 RUSH 1 :
 Protocol Message parser using strings.Split()
-  Create a PoC Function for the server that "reacts" to the TCCHAT 
+  Create a PoC Function for the server that "reacts" to the TCCHAT
   Client -> Server Message
   Create a PoC Function for the client that "reacts" to the TCCHAT,
   Server -> Client Message
