@@ -20,23 +20,22 @@ func accepter_connection(connexions chan net.Conn,l net.Listener) {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-
 		connexions <- c
 }
 }
 
 func connect(c net.Conn) {
 	for {
-
     message, _ := bufio.NewReader(c).ReadString('\n')
-    parsed_args := strings.Split(message, "/")
-
+    parsed_args := strings.Fields(message)
+		fmt.Println("Message recu : ",parsed_args)
     switch parsed_args[0] {
 
     case "TCCHAT_REGISTER": // Ajouter aux autres qu'un utilisateur s'est connécté au serveur
-
-            c.Write([]byte("Bonjour " + parsed_args[1] + " bienvenue dans le chat" ))
-
+						send := "Bonjour " + parsed_args[1] + " et bienvenue !\n"
+						fmt.Print("Message envoyé : ",send)
+            c.Write([]byte(send))
+							
     case "TCCHAT_MESSAGE":
 
             c.Write([]byte(parsed_args[1]))
@@ -52,9 +51,7 @@ func connect(c net.Conn) {
             c.Write([]byte("error" + "\n"))
 
 	   }
-
      fmt.Print("Message Received from : ", c.RemoteAddr().String(), " " +message)
-
      }
      c.Close()
 }
@@ -79,7 +76,7 @@ func main() {
 				fmt.Println("Un nouvel utilisateur à rejoint le serveur !")
 				fmt.Println("Adresse IP :", requetes_client.RemoteAddr().String())
 				fmt.Println("Nombre Actuel D'utilisateur :",nbr_users)
-				requetes_client.Write([]byte("BONJOUR ET BIENVENUE SUR LE TCCHAT\n"))
+				requetes_client.Write([]byte("TCCHAT_WELCOME\tBONJOUR ET BIENVENUE SUR LE TCCHAT\n")) // J'envoie TCCHAT_Welcome
 				fmt.Println("Connexion réussie ! ;)")
 				go connect(requetes_client)
     default:

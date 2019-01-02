@@ -4,11 +4,11 @@ import "net"
 import "fmt"
 import "bufio"
 import "os"
+import "strings"
 
 func envoyer_message(conn net.Conn){
   for {
     reader := bufio.NewReader(os.Stdin)
-    fmt.Print("Message à envoyer : ")
     text, _ := reader.ReadString('\n') // On lit jusqu'a \n -- Blocante
     // send to socket
     fmt.Fprintf(conn, text + "\n") // Envoie au socket
@@ -18,7 +18,14 @@ func envoyer_message(conn net.Conn){
 func ecouter_serveur(conn net.Conn){
   for {
     message, _ := bufio.NewReader(conn).ReadString('\n')
-    fmt.Print("\nServeur: " + message)
+    parsing := strings.Split(message,"\t")
+    switch parsing [0]{
+      case "TCCHAT_WELCOME":
+        receive := parsing [1]
+        fmt.Print("S: " + receive)
+      default:
+        fmt.Print("S : " + message)
+    }
   }
 }
 
@@ -28,9 +35,9 @@ func main() {
   if (err != nil){
   fmt.Println(err)
   os.Exit(3)
-  }else {
-    go envoyer_message(conn)
+  }else{
     go ecouter_serveur(conn)
+    go envoyer_message(conn)
   }
   for{
   }
