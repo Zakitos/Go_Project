@@ -11,7 +11,7 @@ const MIN = 1
 const MAX = 100
 
 func connect(c net.Conn) {
-	fmt.Printf("Serving %s\n", c.RemoteAddr().String())
+	fmt.Printf("Serving %s\n", c.RemoteAddr().String()) // On établit une adresse à l'utilisateur
 
 	for {
     message, _ := bufio.NewReader(c).ReadString('\n')
@@ -45,18 +45,18 @@ func connect(c net.Conn) {
 
 func main() {
 
-	l, err := net.Listen("tcp4", ":8081")
+	l, err := net.Listen("tcp4", ":8081") // J'écoute une co sur le port 8081
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer l.Close()
+	defer l.Close() // A la fin meme si il y a des erreur tu arrête d'écouter le port
 	for {
-		c, err := l.Accept()
+		c, err := l.Accept() // Accepte la requête de l'utilisateur
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		go connect(c)
+		go connect(c) // On fait une go routine pour chacune des requêtes
 	}
 }
