@@ -20,12 +20,12 @@ func accepter_connection(connexions chan net.Conn,l net.Listener) {
 			fmt.Println(err)
 			os.Exit(2)
 		}
+
 		connexions <- c
 }
 }
 
 func connect(c net.Conn) {
-		fmt.Printf("Serving %s\n", c.RemoteAddr().String())
 	for {
 
     message, _ := bufio.NewReader(c).ReadString('\n')
@@ -73,13 +73,15 @@ func main() {
 	go accepter_connection(connections_entrantes,c)
 	for {
 		select {
-    case c := <- connections_entrantes : // Je vide le channel quand il y a du contenu
-				Clients[c] = nbr_users
+    case requetes_client := <- connections_entrantes : // Je vide le channel quand il y a du contenu
+				Clients[requetes_client] = nbr_users
 				nbr_users += 1;
 				fmt.Println("Un nouvel utilisateur à rejoint le serveur !")
-				fmt.Println("Adresse IP :", c.RemoteAddr().String())
+				fmt.Println("Adresse IP :", requetes_client.RemoteAddr().String())
 				fmt.Println("Nombre Actuel D'utilisateur :",nbr_users)
+				requetes_client.Write([]byte("BONJOUR ET BIENVENUE SUR LE TCCHAT\n"))
 				fmt.Println("Connexion réussie ! ;)")
+				go connect(requetes_client)
     default:
     }
 	}

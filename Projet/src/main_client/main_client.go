@@ -13,18 +13,14 @@ func envoyer_message(conn net.Conn){
     // send to socket
     fmt.Fprintf(conn, text + "\n") // Envoie au socket
     fmt.Print("\n")
-    // Ecoute du serveur
-    message, _ := bufio.NewReader(conn).ReadString('\n')
-    fmt.Print("\nMessage from server: " + message)
   }
 }
-/*func ecouter_serveur(conn net.Conn){
-  message, _ := bufio.NewReader(conn).ReadString('\n')
-  switch (message){
-    case "balababaz":
+func ecouter_serveur(conn net.Conn){
+  for {
+    message, _ := bufio.NewReader(conn).ReadString('\n')
+    fmt.Print("\nServeur: " + message)
   }
-  // BLABLA
-}*/
+}
 
 func main() {
   // Connexion avec le serveur
@@ -34,7 +30,7 @@ func main() {
   os.Exit(3)
   }else {
     go envoyer_message(conn)
-    //go ecouter_serveur(conn)
+    go ecouter_serveur(conn)
   }
   for{
   }
