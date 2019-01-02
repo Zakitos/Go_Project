@@ -11,21 +11,26 @@ import (
 
 const MIN = 1
 const MAX = 100
-
+var nbr_users int = 0
 func accepter_connection(connexions chan net.Conn,l net.Listener) {
+	fmt.Println("\t\t\t\tTCCHAT SERVEUR")
 	for {
+		fmt.Println("a")
 		c, err := l.Accept()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
+		nbr_users += 1;
+		fmt.Println("Un nouvel utilisateur à rejoint le serveur !")
+		fmt.Println("Adresse IP :", c.RemoteAddr().String())
+		fmt.Println("Nombre Actuel D'utilisateur :",nbr_users)
 		connexions <- c
 	}
 }
 
 func connect(c net.Conn) {
-	fmt.Printf("Serving %s\n", c.RemoteAddr().String())
-
+		fmt.Printf("Serving %s\n", c.RemoteAddr().String())
 	for {
 
     message, _ := bufio.NewReader(c).ReadString('\n')
@@ -33,7 +38,7 @@ func connect(c net.Conn) {
 
     switch parsed_args[0] {
 
-    case "TCCHAT_REGISTER":
+    case "TCCHAT_REGISTER": // Ajouter aux autres qu'un utilisateur s'est connécté au serveur
 
             c.Write([]byte("Bonjour " + parsed_args[1] + " bienvenue dans le chat" ))
 
