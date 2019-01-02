@@ -19,7 +19,10 @@ func envoyer_message(conn net.Conn){
   }
 }
 func ecouter_serveur(conn net.Conn){
-
+  message, _ := bufio.NewReader(conn).ReadString('\n')
+  switch (message){
+    case "balababaz"
+  }
   // BLABLA
 }
 
