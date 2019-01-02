@@ -13,20 +13,15 @@ const MIN = 1
 const MAX = 100
 var nbr_users int = 0
 func accepter_connection(connexions chan net.Conn,l net.Listener) {
-	fmt.Println("\t\t\t\tTCCHAT SERVEUR")
+	fmt.Println("Lancement de la Go Routine : Accepte les requêtes")
 	for {
-		fmt.Println("a")
 		c, err := l.Accept()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		nbr_users += 1;
-		fmt.Println("Un nouvel utilisateur à rejoint le serveur !")
-		fmt.Println("Adresse IP :", c.RemoteAddr().String())
-		fmt.Println("Nombre Actuel D'utilisateur :",nbr_users)
 		connexions <- c
-	}
+}
 }
 
 func connect(c net.Conn) {
@@ -65,8 +60,9 @@ func connect(c net.Conn) {
 }
 
 func main() {
-
-	connections := make(chan net.Conn)
+	fmt.Println("\t\t\t\tTCCHAT SERVEUR")
+	connections_entrantes := make(chan net.Conn) // Channel por les connexions entrantes
+	Clients := make(map[net.Conn]int) // Dictionnaire, Permet de connaitre la liste des utilisateurs
 	//messages := make(chan string) // bdcst
 	c, err := net.Listen("tcp", ":8081")
 	if err != nil {
@@ -74,8 +70,17 @@ func main() {
 		os.Exit(2)
 	}
 	defer c.Close() // Meme Si il y a une erreur j'arrête découter le port
-	go accepter_connection(connections,c)
+	go accepter_connection(connections_entrantes,c)
 	for {
-			//go connect(c)
+		select {
+    case c := <- connections_entrantes : // Je vide le channel quand il y a du contenu
+				Clients[c] = nbr_users
+				nbr_users += 1;
+				fmt.Println("Un nouvel utilisateur à rejoint le serveur !")
+				fmt.Println("Adresse IP :", c.RemoteAddr().String())
+				fmt.Println("Nombre Actuel D'utilisateur :",nbr_users)
+				fmt.Println("Connexion réussie ! ;)")
+    default:
+    }
 	}
 }
