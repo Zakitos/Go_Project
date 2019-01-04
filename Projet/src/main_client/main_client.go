@@ -23,8 +23,14 @@ func ecouter_serveur(conn net.Conn){
       case "TCCHAT_WELCOME":
         receive := parsing [1]
         fmt.Print("S: " + receive)
+      case "TCCHAT_USEROUT":
+        receive := parsing [1]
+        fmt.Printf("S: Déconnection : %s", receive)
+      case "TCCHAT_USERIN" :
+        receive := parsing[1]
+        fmt.Printf("S : %s",receive)
       default:
-        fmt.Print("S : " + message)
+        fmt.Println(message)
     }
   }
 }
