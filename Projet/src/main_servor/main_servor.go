@@ -45,6 +45,10 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 							c.Write([]byte(send + "\n"))
 							fmt.Printf("Message envoyé : %s \n",send)
 							fmt.Printf("Destinataire : %s \n", c.RemoteAddr().String())
+							// Il faut notifier tout les utilisateurs de l'arrivée d'un nouveau tchateur
+							fmt.Printf("Broadcast vers %d chatters\n",nombre_clients)
+							send = "TCCHAT_USER_CONNECT\t" + Clients[c] + " vient de rejoindre le serveur ! Souhaitez-lui la bienvenue ;)"
+							Message <- send
 						}else{ // Sinon on lui dit de retenter de se connecter avec un autre username
 							send := "TCCHAT_ERROR_ID\t"+"Un Chatter utilise déjà ce nom d'utilisateur"
 							c.Write([]byte(send + "\n"))
