@@ -30,6 +30,9 @@ func ecouter_serveur(conn net.Conn){
       case "TCCHAT_USERIN" :
         receive := parsing[1]
         fmt.Printf("S : %s",receive)
+      case "TCCHAT_ERROR_ID" :
+        receive := parsing [1]
+        fmt.Printf("S : %s",receive)
       default:
         fmt.Println(message)
     }

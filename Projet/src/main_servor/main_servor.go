@@ -8,8 +8,6 @@ import (
 	"os"
 )
 
-const MIN = 1
-const MAX = 100
 var nombre_clients int = 0
 
 func accepter_connection(connexions chan net.Conn,l net.Listener) {
@@ -34,14 +32,25 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 		}
     switch parsed_args[0] {
     case "TCCHAT_REGISTER": // Ajouter aux autres qu'un utilisateur s'est connécté au serveur
-						username := parsed_args [1]
-						Clients[c] = "@" + username
-						fmt.Printf("Un nouvel utilisateur à rejoint le chat ! \nNom D'utilisateur : %s\n",username)
-						fmt.Printf("Nombre Actuel de chatters : %d\n",nombre_clients)
-						send := "TCCHAT_USERIN\tVotre nom d'utilisateur est @" + username
-						c.Write([]byte(send + "\n"))
-						fmt.Printf("Message envoyé : %s \n",send)
-						fmt.Printf("Destinataire : %s \n", c.RemoteAddr().String())
+						username := "@" + parsed_args [1]
+						flag := 0 // On suppose que de base l'username chosis n'est pas présent dans le serveur
+						for _,j:=range Clients { // Je récupere chacune des clés de type net.Conn de tout les clients
+							if (username == j){flag =1} // Si l'username est présent, flag passe à 1
+						}
+						if(flag == 0){ // Si username non présent , on peux le logger
+							Clients[c] = username
+							fmt.Printf("Un nouvel utilisateur à rejoint le chat ! \nNom D'utilisateur : %s\n",username)
+							fmt.Printf("Nombre Actuel de chatters : %d\n",nombre_clients)
+							send := "TCCHAT_USERIN\tVotre nom d'utilisateur est " + username
+							c.Write([]byte(send + "\n"))
+							fmt.Printf("Message envoyé : %s \n",send)
+							fmt.Printf("Destinataire : %s \n", c.RemoteAddr().String())
+						}else{ // Sinon on lui dit de retenter de se connecter avec un autre username
+							send := "TCCHAT_ERROR_ID\t"+"Un Chatter utilise déjà ce nom d'utilisateur"
+							c.Write([]byte(send + "\n"))
+							fmt.Printf("Message envoyé : %s \n",send)
+							flag = 0
+						}
 						break;
     case "TCCHAT_MESSAGE":
 						message = Clients[c] + " : " + parsed_args[1]
