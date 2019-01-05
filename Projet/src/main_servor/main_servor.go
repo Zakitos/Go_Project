@@ -64,12 +64,25 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 						fmt.Printf("Broadcast vers %d chatters\n",nombre_clients)
 						break;
     case "TCCHAT_DISCONNECT":
-							username := parsed_args[1]
-							d <- c
-							fmt.Printf("Déconnecté : %s\n", c.RemoteAddr().String())
-							send := "TCCHAT_USEROUT\t" + "@" + username
-							c.Write([]byte(send+ "\n"))
-							fmt.Printf("Message envoyé [%s] : %s\n",c.RemoteAddr().String(),send)
+							username := "@"+parsed_args[1]
+							fmt.Println(username)
+							fmt.Println(Clients[c])
+							if (username == Clients[c]){
+								d <- c
+								fmt.Printf("Déconnecté : %s\n", c.RemoteAddr().String())
+								send := "TCCHAT_USEROUT\t" + username
+								c.Write([]byte(send+ "\n"))
+								fmt.Printf("Message envoyé [%s] : %s\n",c.RemoteAddr().String(),send)
+								// Il faut notifier tout les utilisateurs de la déconnexion d'un chatter
+								fmt.Printf("Broadcast vers %d chatters\n",nombre_clients)
+								send = "TCCHAT_USER_DISCONNECT\t" + username + " à quitter le serveur"
+								Message <- send
+							}else {
+								send := "TCCHAT_ERROR_ID\t"+"Il ne s'agit pas de votre nom d'utilisateur"
+								c.Write([]byte(send + "\n"))
+								fmt.Printf("Message envoyé : %s \n",send)
+							}
+
 		case "": // Evite de faire crasher le serveur quand un utilisateur se déconnecte
 							break;
     default:
@@ -85,7 +98,6 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 }
 func Broadcast(identifiant net.Conn,user string, message string){
 	fmt.Printf("Message envoyé [%s] : %s\n",identifiant.RemoteAddr().String(),message)
-
 	identifiant.Write([]byte(message + "\n"))
 }
 
