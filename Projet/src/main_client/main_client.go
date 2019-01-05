@@ -26,6 +26,7 @@ func ecouter_serveur(conn net.Conn){
       case "TCCHAT_USEROUT":
         receive := parsing [1]
         fmt.Printf("S: Déconnection : %s", receive)
+        os.Exit(3)
       case "TCCHAT_USERIN" :
         receive := parsing[1]
         fmt.Printf("S : %s",receive)

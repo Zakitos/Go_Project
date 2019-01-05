@@ -26,24 +26,29 @@ func accepter_connection(connexions chan net.Conn,l net.Listener) {
 
 func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message chan string) {
 	for {
-    message, _ := bufio.NewReader(c).ReadString('\n') /// Fonction blocante
+		message, _ := bufio.NewReader(c).ReadString('\n') /// Fonction blocante
+		message = strings.Replace(message,"\n","",-1)
     parsed_args := strings.Split(message,"\t")
-		fmt.Println("Message recu : ",parsed_args)
+		if (len(message)>0){
+			fmt.Println("Message recu : ",parsed_args)
+		}
     switch parsed_args[0] {
     case "TCCHAT_REGISTER": // Ajouter aux autres qu'un utilisateur s'est connécté au serveur
 						username := parsed_args [1]
 						Clients[c] = "@" + username
-						fmt.Print(Clients[c])
-						fmt.Printf("Un nouvel utilisateur à rejoint le chat ! Nom D'utilisateur : %s",username)
+						fmt.Printf("Un nouvel utilisateur à rejoint le chat ! \nNom D'utilisateur : %s\n",username)
 						fmt.Printf("Nombre Actuel de chatters : %d\n",nombre_clients)
 						send := "TCCHAT_USERIN\tVotre nom d'utilisateur est @" + username
 						c.Write([]byte(send + "\n"))
-						fmt.Print("Message envoyé : ",send)
-						fmt.Print("Destinataire :", c.RemoteAddr().String(), " " +message)
+						fmt.Printf("Message envoyé : %s \n",send)
+						fmt.Printf("Destinataire : %s \n", c.RemoteAddr().String())
 						break;
     case "TCCHAT_MESSAGE":
-						Message <- parsed_args[1]
-						fmt.Printf("Message de %s : %s",c.RemoteAddr().String(),parsed_args[1])
+						message = Clients[c] + " : " + parsed_args[1]
+						Message <- message
+						fmt.Printf("Réception d'un message\n")
+						fmt.Printf("Adresse IP : %s\n",c.RemoteAddr().String())
+						fmt.Printf("Broadcast vers %d chatters\n",nombre_clients)
 						break;
     case "TCCHAT_DISCONNECT":
 							username := parsed_args[1]
@@ -51,19 +56,23 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 							fmt.Printf("Déconnecté : %s\n", c.RemoteAddr().String())
 							send := "TCCHAT_USEROUT\t" + "@" + username
 							c.Write([]byte(send+ "\n"))
-							fmt.Print("Message envoyé : ",send)
-							fmt.Print("Destinataire :", c.RemoteAddr().String(), " " +message)
+							fmt.Printf("Message envoyé [%s] : %s\n",c.RemoteAddr().String(),send)
+		case "": // Evite de faire crasher le serveur quand un utilisateur se déconnecte
+							break;
     default:
 						send := "S : Message non valide : " + message + "\n"
 						fmt.Print("Message envoyé : ",send)
             c.Write([]byte(send))
 						fmt.Print("Destinataire :", c.RemoteAddr().String(), " " +message)
+						message = ""
 						break;
 	   }
      }
      c.Close()
 }
 func Broadcast(identifiant net.Conn,user string, message string){
+	fmt.Printf("Message envoyé [%s] : %s\n",identifiant.RemoteAddr().String(),message)
+
 	identifiant.Write([]byte(message + "\n"))
 }
 
@@ -97,7 +106,6 @@ func main() {
 				fmt.Println("Nombre Actuel D'utilisateur :",nombre_clients)
 		case reception_messages := <- messages:
 				//Broadcast
-				fmt.Printf("Broadcast vers %d chatters\n",nombre_clients)
 				for i,j:=range Clients { // Je récupere chacune des clés de type net.Conn de tout les clients
 					go Broadcast(i,j,reception_messages)
 				}
