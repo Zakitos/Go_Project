@@ -6,6 +6,8 @@ import (
 	"net"
 	"strings"
 	"os"
+	"time"
+	"strconv"
 )
 
 var nombre_clients int = 0
@@ -19,7 +21,7 @@ func accepter_connection(connexions chan net.Conn,l net.Listener) {
 			os.Exit(2)
 		}
 		connexions <- c
-}
+	}
 }
 
 func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message chan string) {
@@ -27,7 +29,7 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 		message, _ := bufio.NewReader(c).ReadString('\n') /// Fonction blocante
 		message = strings.Replace(message,"\n","",-1)
     parsed_args := strings.Split(message,"\t")
-		if (len(message)>0){
+		if (len(message) > 0){
 			fmt.Println("Message recu : ",parsed_args)
 		}
     switch parsed_args[0] {
@@ -57,7 +59,13 @@ func connect(c net.Conn, d chan net.Conn, Clients map[net.Conn]string, Message c
 						}
 						break;
     case "TCCHAT_MESSAGE":
-						message = Clients[c] + " : " + parsed_args[1]
+			  		t := time.Now()
+						y := t.Year()
+	 				  mo := t.Month()
+	 					d := t.Day()
+	 					h := t.Hour()
+	 					m := t.Minute()
+						message = Clients[c] + " [" + strconv.Itoa(d) + "/"+ strconv.Itoa(int(mo)) + "/" + strconv.Itoa(y) + " " + strconv.Itoa(h) + "h" + strconv.Itoa(m) + "] : " + parsed_args[1]
 						Message <- message
 						fmt.Printf("Réception d'un message\n")
 						fmt.Printf("Adresse IP : %s\n",c.RemoteAddr().String())
