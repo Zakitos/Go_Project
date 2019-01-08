@@ -19,30 +19,28 @@ func envoyer_message(conn net.Conn){
 func ecouter_serveur(conn net.Conn){
   for {
     message, _ := bufio.NewReader(conn).ReadString('\n')
+    message = strings.Replace(message,"\n","",-1)
     parsing := strings.Split(message,"\t")
     t := time.Now()
     switch parsing [0]{
       case "TCCHAT_WELCOME":
         receive := parsing [1]
-        fmt.Printf("S[%d/%d/%d %dh%d] : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
+        fmt.Printf("S[%d/%d/%d %dh%d] : %s\n",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
       case "TCCHAT_USEROUT":
         receive := parsing [1]
-        fmt.Printf("S[%d/%d/%d %dh%d]: Déconnection : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
-        os.Exit(3)
+        fmt.Printf("S[%d/%d/%d %dh%d]: Déconnection : %s\n",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
       case "TCCHAT_USERIN" :
         receive := parsing[1]
-        fmt.Printf("S[%d/%d/%d %dh%d] : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
+        fmt.Printf("S[%d/%d/%d %dh%d] : %s vient de rejoindre le serveur ! Souhaitez-lui la bienvenue ;)\n",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
       case "TCCHAT_ERROR_ID" :
         receive := parsing [1]
-        fmt.Printf("S[%d/%d/%d %dh%d] : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
-      case "TCCHAT_USER_CONNECT" :
+        fmt.Printf("S[%d/%d/%d %dh%d] : %s\n",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
+        os.Exit(3)
+      case "TCCHAT_MESSAGE":
         receive := parsing [1]
-        fmt.Printf("S[%d/%d/%d %dh%d] : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
-      case "TCCHAT_USER_DISCONNECT" :
-        receive := parsing [1]
-        fmt.Printf("S[%d/%d/%d %dh%d] : %s",t.Day(),t.Month(),t.Year(),t.Hour(),t.Minute(),receive)
+        fmt.Printf("%s\n",receive)
       default: // On recoit un message d'un client
-        fmt.Println(message)
+        os.Exit(3)
     }
   }
 }
