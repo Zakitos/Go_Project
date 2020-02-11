@@ -1,3 +1,4 @@
+Réalisation d'un tchat TCP en Golang. 
 Installation :
 export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin
@@ -8,3 +9,4 @@ export PATH=$PATH:$GOBIN
 Pour compiler un programme : go install "nom_du_fichier"
 Pour le lancer : nom_du_fichier
 
+Réalisation : Aboham Zakaria 
